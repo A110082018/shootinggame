@@ -5,7 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // move
-    CharacterController controller;
+    public static CharacterController controller;
+    public static CapsuleCollider collider;
     public float speed = 3;
     public Joystick joyStick;
 
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        collider = GetComponent<CapsuleCollider>();
     }
 
     void Update()
@@ -26,29 +28,6 @@ public class Player : MonoBehaviour
         PlayerMove();
         FindEnemy();
         Fire();
-        /*
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
-        Vector3 dir = new Vector3(h, 0, v);
-
-        
-        if (dir.magnitude > 0.1f)
-        {
-            float faceAngle = Mathf.Atan2(h, v) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0, faceAngle, 0);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 0.3f);
-        }
-
-        Vector3 move = dir * speed;
-
-        if (!controller.isGrounded)
-        {
-            move.y = -9.8f * 100 * Time.deltaTime;
-        }
-
-        controller.Move(move * speed * Time.deltaTime);
-        */
     }
     public void PlayerMove()
     {
@@ -69,14 +48,14 @@ public class Player : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 0.3f);
         }
 
-        // 移動角色位置
-        controller.Move(dir * speed * Time.deltaTime);
-
         // 地心引力 (y)
         if (!controller.isGrounded)
         {
             dir.y = -98f * 1000 * Time.deltaTime;
         }
+
+        // 移動角色位置
+        controller.Move(dir * speed * Time.deltaTime);
 
     }
 
@@ -107,10 +86,31 @@ public class Player : MonoBehaviour
 
     public void Fire()
     {
-        if (Input.GetKeyDown("Space"))
+        if (Input.GetKeyDown("space"))
         {
             Instantiate(bulletPrefab, firePoint.transform.position, transform.rotation);
         }
+    }
+
+    void OnCollision(Collider other)
+    {
+        if(other.gameObject.tag == "trans")
+        {
+            Debug.Log("trans");
+            teleport.boxcollider.enabled = false;
+            Debug.Log("2");
+            ExecuteAfterTime(3f);
+        }
+
+        ExecuteAfterTime(2f);
+        teleport.boxcollider.enabled = true;
+    }
+
+    public IEnumerator ExecuteAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+ 
+     // Code to execute after the delay
     }
 
 }
