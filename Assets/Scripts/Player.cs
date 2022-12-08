@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
         if (!controller.isGrounded)
         {
             dir.y = -98f * 1000 * Time.deltaTime;
+            //???
         }
 
         // 移動角色位置
@@ -89,22 +90,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown("space"))
         {
             Instantiate(bulletPrefab, firePoint.transform.position, transform.rotation);
+            teleport.isTeleporting = true;
+            //Debug.Log(teleport.isTeleporting);
         }
     }
 
-    void OnCollision(Collider other)
-    {
-        if(other.gameObject.tag == "trans")
-        {
-            Debug.Log("trans");
-            teleport.boxcollider.enabled = false;
-            Debug.Log("2");
-            ExecuteAfterTime(3f);
-        }
-
-        ExecuteAfterTime(2f);
-        teleport.boxcollider.enabled = true;
-    }
 
     public IEnumerator ExecuteAfterTime(float time)
     {

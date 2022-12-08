@@ -5,45 +5,52 @@ using UnityEngine;
 public class teleport : MonoBehaviour
 {
     public Transform otherteleport;
-    public GameObject a;
     public GameObject player;
     public static BoxCollider boxcollider;
+    public static bool isTeleporting = false;
 
     // Start is called before the first frame update
     void Start()
     {
         boxcollider = GetComponent<BoxCollider>();
-        GetComponent<Collider>().enabled = false;
+        //GetComponent<Collider>().enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //...
     }
 
     void OnTriggerEnter(Collider other)
     {
+        
+        Debug.Log("enter");
         if(other.gameObject.tag == "Player")
         {
-            //Player.collider.enabled = false;
-            Debug.Log("Player");
             Player.controller.enabled = false;
-            other.gameObject.transform.position = otherteleport.gameObject.transform.position;
-            Debug.Log("1");
-            ExecuteAfterTime(3f);
+            Trans(other);
             Player.controller.enabled = true;
+            //isTeleporting = true;
         }
+        
+    }
+    
 
-        ExecuteAfterTime(2f);
-        //boxcollider.enabled = true;
+    void Trans(Collider other)
+    {
+        if (isTeleporting == true)
+        {
+            other.gameObject.transform.position = otherteleport.gameObject.transform.position;
+            isTeleporting = false;
+            ExecuteAfterTime(6f);
+            
+        }
     }
 
     public IEnumerator ExecuteAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
- 
-     // Code to execute after the delay
     }
 
 }
