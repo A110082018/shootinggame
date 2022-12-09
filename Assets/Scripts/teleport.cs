@@ -5,6 +5,7 @@ using UnityEngine;
 public class teleport : MonoBehaviour
 {
     public Transform otherteleport;
+    private Vector3 other_place;
     public GameObject player;
     public static BoxCollider boxcollider;
     public static bool isTeleporting = false;
@@ -13,7 +14,7 @@ public class teleport : MonoBehaviour
     void Start()
     {
         boxcollider = GetComponent<BoxCollider>();
-        //GetComponent<Collider>().enabled = false;
+        other_place = otherteleport.position;
     }
 
     // Update is called once per frame
@@ -22,35 +23,29 @@ public class teleport : MonoBehaviour
         //...
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         
         Debug.Log("enter");
         if(other.gameObject.tag == "Player")
         {
-            Player.controller.enabled = false;
-            Trans(other);
-            Player.controller.enabled = true;
-            //isTeleporting = true;
+            StartCoroutine(Trans(other));
         }
         
     }
     
 
-    void Trans(Collider other)
+    IEnumerator Trans(Collision other)
     {
         if (isTeleporting == true)
         {
-            other.gameObject.transform.position = otherteleport.gameObject.transform.position;
+            other.gameObject.transform.position = new Vector3(other_place.x, 1.7f, other_place.z);
+            Player.controller.enabled = false;
             isTeleporting = false;
-            ExecuteAfterTime(6f);
+            yield return new WaitForSeconds(0.5f);
+            Player.controller.enabled = true;
             
         }
-    }
-
-    public IEnumerator ExecuteAfterTime(float time)
-    {
-        yield return new WaitForSeconds(time);
     }
 
 }
